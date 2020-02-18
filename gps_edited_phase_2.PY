@@ -13,20 +13,9 @@ class gps:
 	def __init__(self):
     	self.gpgga_info = "$GPGGA,"
     	self.ser = serial.Serial("/dev/ttyUSB0", baudrate = 115200 , timeout=6)
-
-    	# self.ser.write(str.encode('AT+GPS=1'+'\r\n'))        	# open gps
-    	# sleep(5)
-    	# self.ser.write(str.encode('AT+GPSRD=1'+'\r\n'))
-    	# sleep(1)
-    	# received_data = (str)(self.ser.readline())
-    	# print("REC",received_data) 	
-    	# sleep(1)
 	def GPS_Info(self):
     	print("STARTgpsINFO")
-    	'''
-    	calculate latitude and  longitude
-     	return lat_in_degrees , long_in_degrees
-    	'''
+	
         #read NMEA string received
     	received_data = (str)(self.ser.readline())
     	time_out = 1
@@ -37,7 +26,7 @@ class gps:
 			sleep(1)
         	GPGGA_data_available = received_data.find(self.gpgga_info)   #check for NMEA GPGGA string
         	time_out+=1
-            	# if (GPGGA_data_available == 0 ):
+       
     	time_out = 1
     	if(GPGGA_data_available>0):
 
@@ -96,6 +85,8 @@ class gps:
     	if(long_in_degrees_1==-1 or long_in_degrees_2==-1 or lat_in_degrees_2==-1 or lat_in_degrees_1==-1):
         	return -1
     	return speed
+
+
 	def initial_bearing(self,lat_in_degrees_1 , long_in_degrees_1 , lat_in_degrees_2 , long_in_degrees_2):
 
     	pointA = (lat_in_degrees_1, long_in_degrees_1)
@@ -113,11 +104,12 @@ class gps:
     	y = cos(lat1) * sin(lat2) - (sin(lat1) * cos(lat2) * cos(diffLong))
 
     	initial_bearing = atan2(x, y)
-
-    	# Now we have the initial bearing but math.atan2 return values
-    	# from -180 to + 180 which is not what we want for a compass bearing
-    	# The solution is to normalize the initial bearing as shown below
-    	initial_bearing = degrees(initial_bearing)
+        '''
+    	Now we have the initial bearing but math.atan2 return values
+    	from -180 to + 180 which is not what we want for a compass bearing
+    	The solution is to normalize the initial bearing as shown below
+        '''
+        initial_bearing = degrees(initial_bearing)
     	compass_bearing = (initial_bearing + 360) % 360
     	
     	toli = 3
@@ -147,42 +139,6 @@ class gps:
     	print ("angle:",angle,"direction:",direction)
 
     	return angle , direction
-
-
-
-	#----------------------------------------test ------------------------------------------------
-	# speed = get_speed()
-	# print("your speed : ",speed )
-
-	# dr= calculate_initial_compass_bearing(pointA, pointB)
-	# print("your direction : ", dr )
-	# # if (receive=="ok"||receive=="OK")
-	#----------------------------------------test ------------------------------------------------
-
-	# def main(self):
-	# 	pointA = (lat_1, long_1)
-	# 	pointB = (lat_2, long_2)
-	#     	while True:
-
-	#             	initial_bearing(pointA, pointB)
-
-	#             	speed = get_speed()
-	#             	return speed
-	#             	print("your speed : ",speed ,"km/h" )                               	#
-
-	#             	print("lat in degrees:", str(lat_in_degrees)," long in degree: ", str(long_in_degrees), '\n')
-	#             	map_link = 'http://maps.google.com/?q=' + str(lat_in_degrees) + ',' + str(long_in_degrees)	#create link to plot location on Google map
-	#             	print("<<<<<<<<press ctrl+c to plot location on google maps>>>>>>\n")           	#press ctrl+c to plot on map and exit
-	#             	print("------------------------------------------------------------\n")
-	# 	#    	else :
-	# 	#       	ser.write( str.encode('AT+GPS=1'+'\r\n'))        	# open gps
-	# 	#      	# ser.write(str.encode('AT+AGPS=1'+'\r\n'))        	# open gps
-	# 	#     	sleep(5)
-	#     	#    	ser.write(str.encode('AT+GPSRD=3'+'\r\n'))
-
-	# 	except KeyboardInterrupt:
-	#     	webbrowser.open(map_link)                               	#open current position information in google map
-
 	try:
     	pass
 	except TypeError:
